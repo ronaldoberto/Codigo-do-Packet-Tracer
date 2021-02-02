@@ -1,0 +1,207 @@
+Configurações iniciais (Switch e roteador)
+Entrar no modo Exec Privilegiado
+
+>enable
+Mostrar como configurações que estão ativas sem equipamentos
+
+#show running-config
+Mostrar como configurações que estão salvas sem equipamentos
+
+#show startup-config
+Salvas como configurações que estão do equipamentos
+
+#copy running-config startup-config
+ou
+#write memory
+ou
+#wr
+Reiniciar o equipamento
+
+#reload
+Apagar todas as configurações de salvas
+
+#write erase
+Destravar o terminal
+
+Ctrl+Shift+6
+Ir para a tela de configuração do equipamento
+
+#configure terminal
+Mudar nome do equipamentos
+
+(config)#hostname [nome]
+Inserir um banner de entrada
+
+(config)#banner motd "[mensagem]"
+Inserir senha de Enable
+
+(config)#enable secret [senha] (Criptografada)
+
+(config)#enable password [senha] (Sem criptografia)
+Inserir senha na console
+
+(config)#line console [número-da-console]
+(config-line)#password [senha]
+(config-line)#login
+Encriptar todas as senhas que estão em texto plano
+
+(config)#service password-encryption
+Anular qualquer comando no CISCO IOS
+
+'no' na frente do comando
+Exemplo: no hostname SW-01 --> (Apagar o nome configurado no Switch)
+Voltar para a tela de EXEC-Privilegiado
+
+Atalho no Teclado: Ctrl+Z
+ou
+Comando: end
+Mostrar a tabela MAC do Switch
+
+#show mac-address-table (IOS 12.2)
+
+#show mac address-table dynamic (IOS 15.0)
+Ver arquivos na memória Flash
+
+#dir flash
+Ver arquivos na memória NVRAM
+
+#dir nvram
+Desativar a paginação (--MORE--)
+
+#terminal length 0
+Desativar as mensagens de erro na tela
+
+(config)#no logging console
+Configurar várias interfaces ao mesmo tempo
+
+Exemplo : Configurar todas as interfaces entre a f0 / 1 e f0 / 5
+
+(config)#interface range f0/1-5
+Mostrar resumo das interfaces do equipamento
+
+#show ip interface brief
+Inserir uma descrição em uma interface
+
+(config-if)#description [texto-da-descrição]
+Interface Desativar uma
+
+(config-if)#shutdown
+Interface Ativar Uma
+
+(config-if)#no shutdown
+Definir nome do domínio no dispositivo
+
+(config)#ip domain-name [nome-do-domínio]
+Gerar chave de criptografia
+
+(config)#crypto key generate rsa general-key modulus [tamanho-da-chave-em-bits]
+Criar usuário local
+
+(config)#username [nome-do-usuário] privilege [nível-de-privilégio] secret [senha-do-usuário]
+Configurar acesso via SSH em todas as linhas VTY
+
+(config)line vty 0 15
+(config-line)transport input ssh
+Ativar o login com usuário e senha local (funciona para linhas de Console e VTY)
+
+(config-line)#login local
+Desativar tradução de nome
+
+(config)#no ip domain-lookup
+Configurações do Switch
+Configurar endereço IP em um switch
+
+(config)#interface vlan [id-da-vlan-de-gerenciamento]
+(config-if)#ip address [endereço-ip] [máscara (em decimal)]
+(config-if)#no shutdown
+
+Lembrando que você deve criar a VLAN de Gerenciamento, do contrário o Switch não vai ativar o endereço IP
+Configurar o Gateway Padrão no Switch
+
+(config)#ip default-gateway [ip-do-gateway]
+Configurações do Roteador
+Configurar IP em uma interface ou subinterface
+
+(config-if)#ip address [endereço-ip] [máscara (em decimal)]
+Exibir tabela de roteamento
+
+#show ip route
+Criação de Subinterface e atrelamento dela a uma VLAN
+
+Para configurar uma subinterface, basta colocar um ponto no final do nome da interface onde você quer criar uma subinterface , após o ponto digitar o ID da subinterface , lembrando que o ID da subinterface normalmente é o ID da VLAN a qual essa subinterface será atrelada.
+
+No exemplo abaixo vamos criar uma Subinterface .10 na Interface g0 / 0 e atrelar ela a VLAN 10
+
+(config)#interface g0/0.10
+(config-if)#encapsulation dot1q 10
+Definir um tamanho mínimo de senha para os usuários locais
+
+(config)#security password min-length [tamanho-mínimo]
+Bloquear acesso de um usuário, após muitas acesso de acesso
+
+Exemplo: Bloquear um usuário por 30 Segundos, caso ele erre a senha 3 vezes, em um período de 60 segundos
+
+(config)#login block-for 30 attempts 3 within 60 
+Criar Rota Estática
+
+(config)#ip route [rede-de-destino] [máscara-da-rede-de-destino] [interface-de-saída]
+
+ou
+
+(config)#ip route [rede-de-destino] [máscara-da-rede-de-destino] [ip-do-roteador-que-conhece-a-rede]
+Configurar Rota Padrão
+
+(config)#ip route 0.0.0.0 0.0.0.0 [ip-de-último-recurso]
+Configurações IPv6
+Ver resumo dos endereços IPv6 configurados no equipamento
+
+#show ipv6 interface brief
+Habilitar Roteamento IPv6
+
+(config)#ipv6 unicast-routing
+Configurar IPv6 em uma interface ou subinterface
+
+(config-if)#ipv6 address [endereço-ip]/[prefixo]
+Configurar link IPv6 local em uma interface ou subinterface
+
+(config-if)#ipv6 address [endereço-ip]/[prefixo] link-local
+Configurar Rota Estática IPv6
+
+(config)#ipv6 route [rede-de-destino]/[prefixo] [ip-do-roteador-que-conhece-a-rede]
+
+ou
+
+(config)#ipv6 route [rede-de-destino]/[prefixo] [interface-de-saída]
+Configurar Rota Padrão IPv6
+
+(config)#ipv6 route ::/0 [ip-de-último-recurso]
+Configurações de VLAN
+Criar e definir um nome para uma VLAN
+
+(config)#vlan [id-da-vlan]
+(config-vlan)#name [nome-da-vlan]
+Interface Atrelar uma VLAN a uma
+
+(config)#interface [id-da-interface]
+(config-if)#switchport mode access
+(config-if)#switchport access vlan [id-da-vlan]
+Configurar o Trunk em uma interface
+
+(config)#interface [id-da-interface]
+(config-if)#switchport mode trunk
+(config-if)#switchport trunk native vlan [id-da-vlan_nativa]
+(config-if)#switchport trunk allowed vlan [id-das-vlans (separado por vírgula)]
+Exibir um resumo das VLANs não apresenta nenhum dispositivo e como interfaces atreladas como VLANs
+
+#show vlan brief
+Exibir informações sobre uma VLAN específica
+
+#show vlan id [id-da-vlan]
+ou
+#show vlan name [nome-da-vlan]
+Exibir informações relacionadas a uma VLAN em uma interface específica
+
+#show interface [id-da-interface] switchport
+Deletar arquivo vlan.dat
+
+#delete vlan.dat
